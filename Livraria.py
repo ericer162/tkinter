@@ -1,0 +1,64 @@
+CREATE DATABASE IF NOT EXISTS LivrariaDB;
+USE LivrariaDB;
+
+CREATE TABLE Clientes (
+    ClienteID INT AUTO_INCREMENT PRIMARY KEY,
+    Nome VARCHAR(100) NOT NULL,
+    Email VARCHAR(100) UNIQUE,
+    Telefone VARCHAR(15)
+);
+
+CREATE TABLE Livros (
+    LivroID INT AUTO_INCREMENT PRIMARY KEY,
+    Titulo VARCHAR(150) NOT NULL,
+    Autor VARCHAR(100) NOT NULL,
+    Preco DECIMAL(10,2) NOT NULL
+);
+
+CREATE TABLE Pedidos (
+    PedidoID INT AUTO_INCREMENT PRIMARY KEY,
+    ClienteID INT,
+    LivroID INT,
+    DataPedido DATE NOT NULL,
+    FOREIGN KEY (ClienteID) REFERENCES Clientes(ClienteID),
+    FOREIGN KEY (LivroID) REFERENCES Livros(LivroID)
+);
+
+ALTER TABLE Clientes ADD COLUMN Endereco VARCHAR(200);
+
+ALTER TABLE Clientes MODIFY Telefone VARCHAR(15) NOT NULL;
+
+ALTER TABLE Livros CHANGE Preco Valor DECIMAL(10,2) NOT NULL;
+
+ALTER TABLE Clientes DROP COLUMN Endereco;
+
+DROP TABLE Pedidos;
+
+CREATE TABLE Pedidos (
+    PedidoID INT AUTO_INCREMENT PRIMARY KEY,
+    ClienteID INT,
+    LivroID INT,
+    DataPedido DATE NOT NULL,
+    Quantidade INT NOT NULL,
+    FOREIGN KEY (ClienteID) REFERENCES Clientes(ClienteID),
+    FOREIGN KEY (LivroID) REFERENCES Livros(LivroID)
+);
+
+
+CREATE TABLE Fornecedores (
+    FornecedorID INT AUTO_INCREMENT PRIMARY KEY,
+    Nome VARCHAR(100) NOT NULL,
+    Contato VARCHAR(50)
+);
+
+ALTER TABLE Livros ADD COLUMN FornecedorID INT;
+ALTER TABLE Livros ADD CONSTRAINT fk_fornecedor 
+FOREIGN KEY (FornecedorID) REFERENCES Fornecedores(FornecedorID);
+
+DESC Clientes;
+DESC Livros;
+DESC Pedidos;
+DESC Fornecedores;
+
+
+SHOW TABLES;
