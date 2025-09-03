@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Painel Interativo de Personalização</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <h1>Painel Interativo de Personalização</h1>
+    
+    <div class="painel-controle">
+        <div class="form-group">
+            <label for="frase">Digite uma frase:</label>
+            <input type="text" id="frase" placeholder="Digite sua frase aqui...">
+        </div>
+        
+        <div class="form-group">
+            <label for="cor-fundo">Cor de fundo:</label>
+            <select id="cor-fundo">
+                <option value="#f5f5f5">Padrão</option>
+                <option value="#ffffff">Branco</option>
+                <option value="#f0f8ff">Azul Claro</option>
+                <option value="#fff0f5">Rosa Claro</option>
+                <option value="#f0fff0">Verde Claro</option>
+                <option value="#fffff0">Amarelo Claro</option>
+                <option value="#F03D37">Vermelho</option>
+            </select>
+        </div>
+        
+        <div class="form-group">
+            <label for="cor-texto">Cor do texto:</label>
+            <select id="cor-texto">
+                <option value="#333333">Preto</option>
+                <option value="#2c3e50">Azul Escuro</option>
+                <option value="#8e44ad">Roxo</option>
+                <option value="#c0392b">Vermelho</option>
+                <option value="#16a085">Verde</option>
+                <option value="#e67e22">Laranja</option>
+                <option value="#F5D669">Laranja Amarelado</option>
+            </select>
+        </div>
+        
+        <button id="aplicar">Aplicar</button>
+    </div>
+    
+    <div class="resultado">
+        <p>Sua frase aparecerá aqui:</p>
+        <div id="frase-destaque" class="frase-destaque"></div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+    const btnAplicar = document.getElementById('aplicar');
+    const inputFrase = document.getElementById('frase');
+    const selectCorFundo = document.getElementById('cor-fundo');
+    const selectCorTexto = document.getElementById('cor-texto');
+    const divFraseDestaque = document.getElementById('frase-destaque');
+    
+    btnAplicar.addEventListener('click', function() {
+        // Aplicar a frase
+        const frase = inputFrase.value.trim();
+        if (frase) {
+            divFraseDestaque.textContent = frase;
+        } else {
+            divFraseDestaque.textContent = "Nenhuma frase digitada!";
+        }
+        
+        // Aplicar as cores
+        const corFundo = selectCorFundo.value;
+        const corTexto = selectCorTexto.value;
+        
+        document.body.style.backgroundColor = corFundo;
+        divFraseDestaque.style.color = corTexto;
+    });
+});
+    </script>
+</body>
+</html>
