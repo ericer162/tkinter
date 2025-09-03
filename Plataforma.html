@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Plataforma de Shows</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1><i class="fas fa-guitar"></i> Plataforma de Shows</h1>
+        </header>
+
+        <div class="controls">
+            <div class="add-show">
+                <h2>Adicionar Novo Show</h2>
+                <input type="text" id="artista" placeholder="Artista/Banda">
+                <input type="text" id="data" placeholder="Data (dd/mm/aaaa)">
+                <input type="text" id="local" placeholder="Local">
+                <button id="btn-adicionar">Adicionar Show</button>
+            </div>
+
+            <div class="filters">
+                <h2>Filtrar Shows</h2>
+                <input type="text" id="filtro-artista" placeholder="Pesquisar por artista...">
+                <button id="btn-favoritos">Mostrar apenas favoritos</button>
+            </div>
+        </div>
+
+        <div class="shows-list">
+            <h2>Próximos Shows</h2>
+            <div id="lista-shows"></div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+    // Elementos do DOM
+    const listaShows = document.getElementById('lista-shows');
+    const artistaInput = document.getElementById('artista');
+    const dataInput = document.getElementById('data');
+    const localInput = document.getElementById('local');
+    const btnAdicionar = document.getElementById('btn-adicionar');
+    const filtroArtista = document.getElementById('filtro-artista');
+    const btnFavoritos = document.getElementById('btn-favoritos');
+
+    // Array de shows
+    let shows = [
+        { id: 1, artista: 'Coldplay', data: '15/10/2023', local: 'Allianz Parque, SP', favorito: false },
+        { id: 2, artista: 'Taylor Swift', data: '22/11/2023', local: 'Estádio do Morumbi, SP', favorito: true },
+        { id: 3, artista: 'Iron Maiden', data: '05/12/2023', local: 'Arena da Baixada, PR', favorito: false },
+        { id: 4, artista: 'Drake', data: '10/03/2024', local: 'Jeunesse Arena, RJ', favorito: false },
+        { id: 5, artista: 'The Weeknd', data: '18/04/2024', local: 'Arena Castelão, CE', favorito: false }
+    ];
+
+    // Variáveis de estado
+    let mostrarApenasFavoritos = false;
+    let termoPesquisa = '';
+
+    // Função para renderizar os shows
+    function renderizarShows() {
+        listaShows.innerHTML = '';
+
+        const showsFiltrados = shows.filter(show => {
+            const correspondeAoFiltro = show.artista.toLowerCase().includes(termoPesquisa.toLowerCase());
+            const ehFavorito = mostrarApenasFavoritos ? show.favorito : true;
+            return correspondeAoFiltro && ehFavorito;
+        });
+
+        if (showsFiltrados.length === 0) {
+            listaShows.innerHTML = '<p>Nenhum show encontrado.</p>';
+            return;
+        }
+
+        showsFiltrados.forEach(show => {
+            const showElement = document.createElement('div');
+            showElement.className = 'show-card';
+            showElement.innerHTML = `
+                <div class="show-info">
+                    <div class="show-artista">${show.artista}</div>
+                    <div class="show-data">📅 ${show.data}</div>
+                    <div class="show-local">📍 ${show.local}</div>
+                </div>
+                <div class="show-actions">
+                    <button class="favorite-btn ${show.favorito ? 'favorited' : ''}" 
+                            data-id="${show.id}">
+                        <i class="fas fa-heart"></i>
+                    </button>
+                    <button class="delete-btn" data-id="${show.id}">
+                        <i class="fas fa-trash"></i>
+                    </button>
+                </div>
+            `;
+            listaShows.appendChild(showElement);
+        });
+
+        // Adicionar event listeners aos botões
+        document.querySelectorAll('.favorite-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                const id = parseInt(this.getAttribute('data-id'));
+                toggleFavorito(id);
+            });
+        });
+
+        document.querySelectorAll('.delete-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                const id = parseInt(this.getAttribute('data-id'));
+                deletarShow(id);
+            });
+        });
+    }
+
+    // Função para adicionar um novo show
+    function adicionarShow() {
+        const artista = artistaInput.value.trim();
+        const data = dataInput.value.trim();
+        const local = localInput.value.trim();
+
+        if (!artista || !data || !local) {
+            alert('Por favor, preencha todos os campos!');
+            return;
+        }
+
+        const novoShow = {
+            id: Date.now(), // Usando timestamp como ID único
+            artista,
+            data,
+            local,
+            favorito: false
+        };
+
+        shows.unshift(novoShow); // Adiciona no início do array
+        renderizarShows();
+
+        // Limpar inputs
+        artistaInput.value = '';
+        dataInput.value = '';
+        localInput.value = '';
+    }
+
+    // Função para alternar status de favorito
+    function toggleFavorito(id) {
+        shows = shows.map(show => {
+            if (show.id === id) {
+                return { ...show, favorito: !show.favorito };
+            }
+            return show;
+        });
+        renderizarShows();
+    }
+
+    // Função para deletar um show
+    function deletarShow(id) {
+        if (confirm('Tem certeza que deseja remover este show?')) {
+            shows = shows.filter(show => show.id !== id);
+            renderizarShows();
+        }
+    }
+
+    // Event Listeners
+    btnAdicionar.addEventListener('click', adicionarShow);
+
+    filtroArtista.addEventListener('input', function() {
+        termoPesquisa = this.value;
+        renderizarShows();
+    });
+
+    btnFavoritos.addEventListener('click', function() {
+        mostrarApenasFavoritos = !mostrarApenasFavoritos;
+        this.textContent = mostrarApenasFavoritos ? 'Mostrar todos' : 'Mostrar apenas favoritos';
+        renderizarShows();
+    });
+
+    // Permitir adicionar com Enter
+    artistaInput.addEventListener('keypress', function(e) {
+        if (e.key === 'Enter') adicionarShow();
+    });
+    dataInput.addEventListener('keypress', function(e) {
+        if (e.key === 'Enter') adicionarShow();
+    });
+    localInput.addEventListener('keypress', function(e) {
+        if (e.key === 'Enter') adicionarShow();
+    });
+
+    // Renderizar inicialmente
+    renderizarShows();
+});
+    </script>
+</body>
+</html>
